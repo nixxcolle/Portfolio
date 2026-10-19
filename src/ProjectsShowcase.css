@@ -1,0 +1,110 @@
+.showcase-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.showcase-title {
+    font-size: 3.5rem;
+    font-family: var(--font-main);
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+}
+
+.showcase-title .accent {
+    color: var(--primary-hover);
+    text-shadow: 0 0 30px rgba(232, 186, 194, 0.4);
+}
+
+.showcase-subtitle {
+    max-width: 650px;
+    margin: 0 auto 3rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+.showcase-tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5rem;
+}
+
+.showcase-tabs {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: flex;
+    padding: 0.5rem;
+    border-radius: 50px;
+    gap: 0.5rem;
+    box-shadow: 0 10px 30px rgba(230, 190, 195, 0.15);
+}
+
+.showcase-tab {
+    padding: 0.8rem 2rem;
+    border-radius: 40px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-transform: uppercase;
+}
+
+.showcase-tab ion-icon {
+    font-size: 1.2rem;
+    transition: transform 0.4s;
+}
+
+.showcase-tab:hover {
+    color: var(--text-main);
+}
+
+.showcase-tab.active {
+    background: var(--primary);
+    color: var(--text-main);
+    box-shadow: 0 8px 20px rgba(244, 211, 216, 0.6);
+}
+
+.showcase-tab.active ion-icon {
+    transform: scale(1.1) rotate(-10deg);
+}
+
+/* Empty states for new tabs */
+.showcase-empty-state {
+    text-align: center;
+    padding: 5rem 0;
+    color: var(--text-light);
+    opacity: 0.6;
+}
+
+.showcase-empty-state ion-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .showcase-tabs {
+        flex-direction: column;
+        width: 100%;
+        border-radius: 20px;
+    }
+    .showcase-tab {
+        width: 100%;
+        justify-content: center;
+    }
+}

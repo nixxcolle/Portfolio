@@ -1,0 +1,123 @@
+.tech-skills-section {
+    padding: 8rem 0;
+    position: relative;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.tech-skills-title {
+    font-size: 3rem;
+    font-family: var(--font-main);
+    font-weight: 700;
+    margin-bottom: 4rem;
+    color: var(--text-main);
+    text-align: center;
+    position: relative;
+}
+
+.tech-skills-title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.tech-skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem 4rem;
+}
+
+@media (max-width: 992px) {
+    .tech-skills-grid {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+.skill-bar-container {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(230, 190, 195, 0.1);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.skill-bar-container:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(230, 190, 195, 0.25);
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--primary);
+}
+
+.skill-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.skill-bar-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.skill-bar-percent {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--primary-hover);
+    background: var(--bg-pink);
+    padding: 0.3rem 0.8rem;
+    border-radius: 8px;
+}
+
+.skill-bar-track {
+    width: 100%;
+    height: 10px;
+    background-color: var(--bg-pink);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(244, 211, 216, 0.5);
+    transition: width 1.8s cubic-bezier(0.1, 0.7, 0.1, 1);
+    width: 0;
+}
+
+/* Animations using the fade-in-visible from App.jsx */
+.skill-bar-container {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.skill-bar-container.fade-in-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Icon refinement */
+.skill-icon-emoji {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+}

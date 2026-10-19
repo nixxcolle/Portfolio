@@ -1,0 +1,148 @@
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0a0808; /* Darker than the body bg to make it pop */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Background Glow */
+.loading-bg-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(244, 211, 216, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+}
+
+/* Icons Section */
+.loading-icons {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.loading-icon-box {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(244, 211, 216, 0.1);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--primary);
+    box-shadow: 0 0 20px rgba(244, 211, 216, 0.05);
+    animation: iconFloat 3s infinite ease-in-out;
+}
+
+.loading-icon-box:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.loading-icon-box:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); box-shadow: 0 0 30px rgba(244, 211, 216, 0.15); }
+}
+
+/* Text Section */
+.loading-text-container {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.loading-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 6px;
+    margin-bottom: 0.8rem;
+    opacity: 0.7;
+}
+
+.loading-subtitle {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(244, 211, 216, 0.4);
+}
+
+/* Badge Section */
+.loading-badge {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary);
+    font-size: 0.9rem;
+    border: 1px solid rgba(244, 211, 216, 0.2);
+    margin-bottom: 4rem;
+}
+
+.loading-badge ion-icon {
+    font-size: 1.1rem;
+}
+
+/* Progress Bar */
+.loading-progress-container {
+    width: 400px;
+    max-width: 80%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+}
+
+/* Entrance Animations */
+.animate-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.loading-icons.animate-in { animation-delay: 0.2s; }
+.loading-text-container.animate-in { animation-delay: 0.4s; }
+.loading-badge.animate-in { animation-delay: 0.6s; }
+.loading-progress-container.animate-in { animation-delay: 0.8s; }

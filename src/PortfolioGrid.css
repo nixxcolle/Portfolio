@@ -1,0 +1,300 @@
+
+.gallery-section {
+    padding: 8rem 0;
+    background: radial-gradient(circle at center, #1a1516 0%, #0a0a0a 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.gallery-section::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(244, 211, 216, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(244, 211, 216, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.gallery-container {
+    perspective: 1000px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.gallery-card {
+    position: relative;
+    height: 450px;
+    border-radius: 40px;
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.8s ease, border-color 0.8s ease;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3rem;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    transform: translateY(var(--card-offset-y, 0)) rotateZ(var(--card-rotation, 0));
+}
+
+.gallery-card:hover {
+    transform: translateY(calc(var(--card-offset-y, 0) - 20px)) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+    z-index: 10;
+}
+
+.gallery-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 100%);
+    opacity: 0.6;
+    transition: opacity 0.5s ease;
+    z-index: 2;
+}
+
+.gallery-card:hover::after {
+    opacity: 0.9;
+}
+
+.card-number {
+    position: absolute;
+    top: 3rem;
+    left: 3rem;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 5;
+    transition: all 0.5s ease;
+}
+
+.gallery-card:hover .card-number {
+    color: var(--white);
+    transform: translateY(-5px);
+}
+
+.card-tag {
+    position: absolute;
+    top: 3.2rem;
+    left: 6.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    z-index: 5;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.5s ease 0.1s;
+}
+
+.gallery-card:hover .card-tag {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.card-icon-btn {
+    position: absolute;
+    top: 3rem;
+    right: 3rem;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 1rem;
+    z-index: 5;
+    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    opacity: 0.5;
+}
+
+.gallery-card:hover .card-icon-btn {
+    transform: translate(5px, -5px) rotate(45deg);
+    background: var(--white);
+    color: var(--text-main);
+    opacity: 1;
+}
+
+.card-info {
+    position: relative;
+    z-index: 5;
+    transform: translateY(20px);
+    transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.gallery-card:hover .card-info {
+    transform: translateY(0);
+}
+
+.card-title {
+    font-size: 2.8rem;
+    color: var(--white);
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    line-height: 1;
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    transition: color 0.5s ease;
+}
+
+.gallery-card:hover .card-subtitle {
+    color: var(--primary-hover);
+}
+
+.card-line {
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    margin-top: 1rem;
+    transition: width 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.gallery-card:hover .card-line {
+    width: 100%;
+}
+
+.card-image-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+    transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s ease;
+    filter: grayscale(100%);
+}
+
+.gallery-card:hover .card-image-bg {
+    transform: scale(1.15);
+    opacity: 0.6;
+    filter: grayscale(0%);
+}
+
+/* Modal / Overlay */
+.section-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease;
+}
+
+.section-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay-content {
+    background: var(--bg-main);
+    width: 90%;
+    max-width: 1100px;
+    height: 85vh;
+    border-radius: 30px;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+}
+
+.section-overlay.active .overlay-content {
+    transform: scale(1);
+}
+
+.close-overlay {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1010;
+    font-size: 2rem;
+    color: var(--text-main);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.close-overlay:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: var(--primary-hover);
+}
+
+/* Scrollbar for overlay */
+.overlay-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.overlay-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.overlay-content::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.overview-tip {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    margin-top: 2rem;
+    font-size: 1rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+}
