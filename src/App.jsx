@@ -698,7 +698,7 @@ function App() {
               <div className="hero-image-frame">
                 <div className="hero-glow-back"></div>
                 <img
-                  src="/images/picprofile%20o.png"
+                  src="/images/picprofile-o.png"
                   alt="Risajune Bernada Tenoria"
                   className="hero-img"
                 />
