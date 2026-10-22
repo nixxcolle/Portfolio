@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import './index.css';
 import LoadingScreen from './LoadingScreen';
 
+// Base URL from vite.config.js (e.g. '/Portfolio/'). Used so images and files
+// work both locally and on GitHub Pages.
+const BASE = import.meta.env.BASE_URL;
+
 function App() {
   const [headerScrolled, setHeaderScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -251,7 +255,7 @@ function App() {
       github: 'https://github.com/CoDeX-Ray/SHIELD',
       featured: true,
       color: '#132822',
-      image: '/images/shield.png'
+      image: BASE + 'images/shield.png'
     },
     {
       id: 'dalak8',
@@ -273,7 +277,7 @@ function App() {
       github: 'https://github.com/CoDeX-Ray/DaLak8',
       featured: true,
       color: '#2a1a1f',
-      image: '/images/dalak8.png'
+      image: BASE + 'images/dalak8.png'
     },
     {
       id: 'iot-health',
@@ -295,7 +299,7 @@ function App() {
       github: 'https://github.com/nixxcolle',
       featured: false,
       color: '#16222c',
-      image: '/images/card_skills.png'
+      image: BASE + 'images/card_skills.png'
     },
     {
       id: 'vb-game',
@@ -317,7 +321,7 @@ function App() {
       github: 'https://github.com/nixxcolle',
       featured: false,
       color: '#211928',
-      image: '/images/card_about.png'
+      image: BASE + 'images/card_about.png'
     },
     {
       id: 'logic-breadboard',
@@ -339,7 +343,7 @@ function App() {
       github: 'https://github.com/nixxcolle',
       featured: false,
       color: '#1a1f28',
-      image: '/images/card_projects.png'
+      image: BASE + 'images/card_projects.png'
     },
     {
       id: 'academic-portal',
@@ -361,7 +365,7 @@ function App() {
       github: 'https://github.com/nixxcolle',
       featured: false,
       color: '#251b22',
-      image: '/images/card_academic.png'
+      image: BASE + 'images/card_academic.png'
     }
   ];
 
@@ -501,7 +505,7 @@ function App() {
 
           <div className="nav-actions">
             <a
-              href="/resume.pdf"
+              href={BASE + 'resume.pdf'}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary nav-btn"
@@ -590,7 +594,7 @@ function App() {
             </li>
             <li className="mobile-resume-li">
               <a
-                href="/resume.pdf"
+                href={BASE + 'resume.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary btn-block"
@@ -658,7 +662,7 @@ function App() {
                 <span>Let's Talk</span>
               </a>
               <a
-                href="/resume.pdf"
+                href={BASE + 'resume.pdf'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-large"
@@ -698,7 +702,7 @@ function App() {
               <div className="hero-image-frame">
                 <div className="hero-glow-back"></div>
                 <img
-                  src="/images/picprofile-o.png"
+                  src={BASE + 'images/picprofile-o.png'}
                   alt="Risajune Bernada Tenoria"
                   className="hero-img"
                 />
@@ -753,7 +757,7 @@ function App() {
                 <div className="card-ambient-light"></div>
                 <div className="story-header">
                   <div className="story-avatar-box">
-                    <img src="/images/picprofile%20o.png" alt="Risajune Avatar" className="story-avatar" />
+                    <img src={BASE + 'images/picprofile-o.png'} alt="Risajune Avatar" className="story-avatar" />
                   </div>
                   <div>
                     <h3 className="story-author">Risajune Bernada Tenoria</h3>
@@ -1214,7 +1218,7 @@ function App() {
                     ref={addToRefs}
                   >
                     <div className="flagship-card-glow" style={{ background: `radial-gradient(circle at 50% 30%, ${proj.color} 0%, transparent 70%)` }}></div>
-                    
+
                     {/* Visual Media Column */}
                     <div className="flagship-visual-col" style={{ backgroundColor: proj.color }}>
                       <div className="flagship-visual-inner">
@@ -1738,7 +1742,7 @@ function App() {
                   <li><a href="#projects" onClick={(e) => handleNavClick(e, 'projects')}>Featured Projects</a></li>
                   <li><a href="#achievements" onClick={(e) => handleNavClick(e, 'achievements')}>Achievements</a></li>
                   <li><a href="#contact" onClick={(e) => handleNavClick(e, 'contact')}>Contact & Inquiries</a></li>
-                  <li><a href="/resume.pdf" target="_blank" rel="noopener noreferrer">Download Resume</a></li>
+                  <li><a href={BASE + 'resume.pdf'} target="_blank" rel="noopener noreferrer">Download Resume</a></li>
                 </ul>
               </div>
             </div>
