@@ -6,39 +6,19 @@ const LoadingScreen = ({ onFinish }) => {
     const [isLeaving, setIsLeaving] = useState(false);
 
     useEffect(() => {
-        // Function to increment progress
-        const incrementProgress = () => {
-            setProgress((prev) => {
-                const next = prev + Math.random() * 15;
-                return next > 100 ? 100 : next;
-            });
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const start = setTimeout(() => setProgress(100), 30);
+        const leave = setTimeout(() => setIsLeaving(true), reduceMotion ? 80 : 420);
+        const finish = setTimeout(onFinish, reduceMotion ? 100 : 650);
+        return () => {
+            clearTimeout(start);
+            clearTimeout(leave);
+            clearTimeout(finish);
         };
-
-        const timer = setInterval(incrementProgress, 200);
-
-        // Cleanup interval
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
-        if (progress === 100) {
-            // Wait a bit before leaving
-            const leaveTimer = setTimeout(() => {
-                setIsLeaving(true);
-                // Call onFinish callback after fade-out
-                const completeTimer = setTimeout(() => {
-                    onFinish();
-                }, 800); // Same as transition Duration in CSS
-                
-                return () => clearTimeout(completeTimer);
-            }, 500);
-
-            return () => clearTimeout(leaveTimer);
-        }
-    }, [progress, onFinish]);
+    }, [onFinish]);
 
     return (
-        <div className={`loading-screen ${isLeaving ? 'fade-out' : ''}`}>
+        <div className={`loading-screen ${isLeaving ? 'fade-out' : ''}`} role="status" aria-live="polite">
             <div className="loading-bg-glow"></div>
             
             <div className="loading-icons animate-in">

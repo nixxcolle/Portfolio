@@ -33,6 +33,8 @@ function App() {
   });
 
   const elementsRef = useRef([]);
+  const modalRef = useRef(null);
+  const mobileToggleRef = useRef(null);
 
   // Scroll listener for sticky header, scroll-to-top button, and reading progress bar
   useEffect(() => {
@@ -75,43 +77,8 @@ function App() {
       if (el) sectionObserver.observe(el);
     });
 
-    // Parallax interactive background & spotlight tracker with requestAnimationFrame
-    let rafId = null;
-    const handleMouseMove = (e) => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
-
-        const x = (e.clientX - window.innerWidth / 2) / 60;
-        const y = (e.clientY - window.innerHeight / 2) / 60;
-
-        const icons = document.querySelectorAll('.float-container');
-        icons.forEach((icon, index) => {
-          const depth = (index % 4) + 1;
-          const xOffset = x * depth * -0.9;
-          const yOffset = y * depth * -0.9;
-          icon.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
-        });
-
-        const shapes = document.querySelectorAll('.floating-shape');
-        shapes.forEach((shape, index) => {
-          const depth = (index % 3) + 1;
-          const xOffset = x * depth * 0.7;
-          const yOffset = y * depth * 0.7;
-          shape.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
-        });
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (rafId) cancelAnimationFrame(rafId);
       sectionObserver.disconnect();
     };
   }, []);
@@ -120,11 +87,12 @@ function App() {
   useEffect(() => {
     if (isLoading) return;
 
-    // Small delay to ensure React DOM has completed layout
+    let revealObserver;
+    // Observe after layout without hiding content while JavaScript initializes.
     const timer = setTimeout(() => {
       setIsLoaded(true);
 
-      const revealObserver = new IntersectionObserver(
+      revealObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
@@ -150,33 +118,73 @@ function App() {
       });
     }, 60);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      revealObserver?.disconnect();
+    };
   }, [isLoading, projectFilter]);
 
-  // Modal keyboard accessibility and body scroll lock
+  // Keep keyboard focus inside project details, then return to the opener.
   useEffect(() => {
+    if (!selectedProject) return;
+    const opener = document.activeElement;
+    const modal = modalRef.current;
+    const background = document.querySelectorAll('.header, main, .footer-modern, .scroll-to-top-btn');
+    background.forEach((element) => { element.inert = true; });
+    modal?.querySelector('.modal-close-btn')?.focus();
+
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && selectedProject) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
         setSelectedProject(null);
+      }
+      if (e.key === 'Tab' && modal) {
+        const controls = modal.querySelectorAll('a[href], button:not([disabled]), input, textarea, [tabindex="0"]');
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-
-    if (selectedProject) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      background.forEach((element) => { element.inert = false; });
+      if (opener instanceof HTMLElement && opener.isConnected) opener.focus({ preventScroll: true });
     };
   }, [selectedProject]);
 
-  const handleLoadingFinish = () => {
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    if (selectedProject || mobileMenuOpen) document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [selectedProject, mobileMenuOpen]);
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+        mobileToggleRef.current?.focus();
+      }
+    };
+    const desktop = window.matchMedia('(min-width: 1000px)');
+    const closeOnDesktop = () => { if (desktop.matches) setMobileMenuOpen(false); };
+    window.addEventListener('keydown', closeOnEscape);
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+      desktop.removeEventListener('change', closeOnDesktop);
+    };
+  }, [mobileMenuOpen]);
+
+  const handleLoadingFinish = useCallback(() => {
     setIsLoading(false);
-  };
+  }, []);
 
   const addToRefs = (el) => {
     if (el && !elementsRef.current.includes(el)) {
@@ -189,12 +197,12 @@ function App() {
     setMobileMenuOpen(false);
     const targetEl = document.getElementById(targetId);
     if (targetEl) {
-      const navOffset = 80;
+      const navOffset = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) + 24;
       const elementPosition = targetEl.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - navOffset;
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
       });
       setActiveSection(targetId);
     }
@@ -229,7 +237,7 @@ function App() {
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
     });
   };
 
@@ -435,7 +443,7 @@ function App() {
           </a>
 
           {/* Desktop Nav Links with Scrollspy Highlighting */}
-          <nav className="nav-desktop">
+          <nav className="nav-desktop" aria-label="Main navigation">
             <ul className="nav-links">
               <li>
                 <a
@@ -516,8 +524,11 @@ function App() {
 
             <button
               className={`mobile-toggle ${mobileMenuOpen ? 'open' : ''}`}
+              ref={mobileToggleRef}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle Navigation Menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               <span className="bar"></span>
               <span className="bar"></span>
@@ -527,7 +538,7 @@ function App() {
         </div>
 
         {/* Mobile Navigation Drawer */}
-        <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'active' : ''}`}>
+        <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'active' : ''}`} id="mobile-navigation" role="navigation" aria-label="Mobile navigation" aria-hidden={!mobileMenuOpen}>
           <ul className="mobile-nav-links">
             <li>
               <a
@@ -705,6 +716,8 @@ function App() {
                   src={BASE + 'images/picprofile-o.png'}
                   alt="Risajune Bernada Tenoria"
                   className="hero-img"
+                  fetchpriority="high"
+                  decoding="async"
                 />
                 <div className="hero-card-floating-badge badge-top">
                   <ion-icon name="hardware-chip"></ion-icon>
@@ -1222,7 +1235,7 @@ function App() {
                     {/* Visual Media Column */}
                     <div className="flagship-visual-col" style={{ backgroundColor: proj.color }}>
                       <div className="flagship-visual-inner">
-                        <img src={proj.image} alt={proj.title} className="flagship-project-img" />
+                        <img src={proj.image} alt={proj.title} className="flagship-project-img" loading="lazy" decoding="async" />
                         <div className="flagship-telemetry-badge">
                           <span className="status-dot-small"></span>
                           <span>{proj.status}</span>
@@ -1307,6 +1320,7 @@ function App() {
               <div className="project-filter-tabs">
                 <button
                   className={`filter-btn ${projectFilter === 'all' ? 'active' : ''}`}
+                  aria-pressed={projectFilter === 'all'}
                   onClick={() => setProjectFilter('all')}
                 >
                   <ion-icon name="grid-outline"></ion-icon>
@@ -1315,6 +1329,7 @@ function App() {
                 </button>
                 <button
                   className={`filter-btn ${projectFilter === 'iot' ? 'active' : ''}`}
+                  aria-pressed={projectFilter === 'iot'}
                   onClick={() => setProjectFilter('iot')}
                 >
                   <ion-icon name="hardware-chip-outline"></ion-icon>
@@ -1325,6 +1340,7 @@ function App() {
                 </button>
                 <button
                   className={`filter-btn ${projectFilter === 'mobile' ? 'active' : ''}`}
+                  aria-pressed={projectFilter === 'mobile'}
                   onClick={() => setProjectFilter('mobile')}
                 >
                   <ion-icon name="phone-portrait-outline"></ion-icon>
@@ -1335,6 +1351,7 @@ function App() {
                 </button>
                 <button
                   className={`filter-btn ${projectFilter === 'software' ? 'active' : ''}`}
+                  aria-pressed={projectFilter === 'software'}
                   onClick={() => setProjectFilter('software')}
                 >
                   <ion-icon name="code-slash-outline"></ion-icon>
@@ -1347,11 +1364,11 @@ function App() {
             </div>
 
             {/* Projects Grid */}
-            <div className="projects-card-grid">
+            <div className="projects-card-grid" aria-live="polite">
               {filteredProjects.map((proj) => (
                 <div className="modern-project-card reveal-on-scroll" key={proj.id} ref={addToRefs}>
                   <div className="project-card-image-box" style={{ backgroundColor: proj.color }}>
-                    <img src={proj.image} alt={proj.title} className="modern-project-img" />
+                    <img src={proj.image} alt={proj.title} className="modern-project-img" loading="lazy" decoding="async" />
                     <span className="project-tag-overlay">{proj.tagText}</span>
                     <span className="project-status-overlay">
                       <span className="status-dot-small"></span>
@@ -1621,7 +1638,7 @@ function App() {
                   <p className="form-subtitle">Fill in the fields below and I'll respond promptly.</p>
 
                   {formStatus.submitted && (
-                    <div className="form-alert-success">
+                    <div className="form-alert-success" role="status">
                       <ion-icon name="checkmark-circle-outline"></ion-icon>
                       <span>Thank you! Your message has been sent successfully. I will get back to you soon.</span>
                     </div>
@@ -1635,6 +1652,7 @@ function App() {
                           type="text"
                           id="name"
                           name="name"
+                          autoComplete="name"
                           value={formData.name}
                           onChange={handleFormChange}
                           placeholder="Juan Dela Cruz"
@@ -1648,6 +1666,7 @@ function App() {
                           type="email"
                           id="email"
                           name="email"
+                          autoComplete="email"
                           value={formData.email}
                           onChange={handleFormChange}
                           placeholder="juan@example.com"
@@ -1791,6 +1810,7 @@ function App() {
         >
           <div
             className="project-modal-window"
+            ref={modalRef}
             onClick={(e) => e.stopPropagation()}
           >
             <button
